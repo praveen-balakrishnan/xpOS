@@ -1,0 +1,119 @@
+diff -Naru binutils-2.41/bfd/config.bfd binutils_patched/bfd/config.bfd
+--- binutils-2.41/bfd/config.bfd	2025-02-19 16:02:44.300710828 +0000
++++ binutils_patched/bfd/config.bfd	2025-02-20 16:27:12.738911247 +0000
+@@ -734,6 +734,11 @@
+     targ_selvecs="i386_elf32_vec iamcu_elf32_vec x86_64_elf32_vec"
+     want64=true
+     ;;
++  x86_64-*-xpos*)
++    targ_defvec=x86_64_elf64_vec
++    targ_selvecs=i386_elf32_vec
++    want64=true
++    ;;
+ #endif
+   i[3-7]86-*-lynxos*)
+     targ_defvec=i386_elf32_vec
+diff -Naru binutils-2.41/config.sub binutils_patched/config.sub
+--- binutils-2.41/config.sub	2025-02-19 15:53:59.712135239 +0000
++++ binutils_patched/config.sub	2025-02-20 16:21:41.730508640 +0000
+@@ -1758,7 +1758,7 @@
+ 	     | onefs* | tirtos* | phoenix* | fuchsia* | redox* | bme* \
+ 	     | midnightbsd* | amdhsa* | unleashed* | emscripten* | wasi* \
+ 	     | nsk* | powerunix* | genode* | zvmoe* | qnx* | emx* | zephyr* \
+-	     | fiwix* | mlibc* )
++	     | fiwix* | mlibc* | xpos* )
+ 		;;
+ 	# This one is extra strict with allowed versions
+ 	sco3.2v2 | sco3.2v[4-9]* | sco5v6*)
+diff -Naru binutils-2.41/gas/configure.tgt binutils_patched/gas/configure.tgt
+--- binutils-2.41/gas/configure.tgt	2023-07-02 23:00:00.000000000 +0000
++++ binutils_patched/gas/configure.tgt	2025-02-21 12:58:45.184344139 +0000
+@@ -241,6 +241,7 @@
+     esac ;;
+   i386-*-lynxos*)			fmt=elf em=lynx ;;
+   i386-*-redox*)			fmt=elf ;;
++  i386-*-xpos*)			fmt=elf ;;
+   i386-*-solaris*)			fmt=elf em=solaris ;;
+   i386-*-freebsd* \
+   | i386-*-kfreebsd*-gnu)		fmt=elf em=freebsd ;;
+diff -Naru binutils-2.41/ld/Makefile.am binutils_patched/ld/Makefile.am
+--- binutils-2.41/ld/Makefile.am	2023-07-02 23:00:00.000000000 +0000
++++ binutils_patched/ld/Makefile.am	2025-02-21 15:35:53.406485247 +0000
+@@ -460,6 +460,7 @@
+ 	eelf_x86_64_fbsd.c \
+ 	eelf_x86_64_haiku.c \
+ 	eelf_x86_64_sol2.c \
++	eelf_x86_64_xpos.c \
+ 	ehppa64linux.c \
+ 	ei386pep.c \
+ 	emmo.c
+@@ -954,6 +955,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_cloudabi.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_fbsd.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_haiku.Pc@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_xpos.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_sol2.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ehppa64linux.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ei386pep.Pc@am__quote@
+diff -Naru binutils-2.41/ld/Makefile.in binutils_patched/ld/Makefile.in
+--- binutils-2.41/ld/Makefile.in	2023-07-02 23:00:00.000000000 +0000
++++ binutils_patched/ld/Makefile.in	2025-02-21 15:36:12.764550724 +0000
+@@ -960,6 +960,7 @@
+ 	eelf_x86_64_fbsd.c \
+ 	eelf_x86_64_haiku.c \
+ 	eelf_x86_64_sol2.c \
++	eelf_x86_64_xpos.c \
+ 	ehppa64linux.c \
+ 	ei386pep.c \
+ 	emmo.c
+@@ -1472,6 +1473,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_fbsd.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_haiku.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_sol2.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_xpos.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eh8300elf.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eh8300elf_linux.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eh8300helf.Po@am__quote@
+@@ -2671,6 +2673,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_cloudabi.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_fbsd.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_haiku.Pc@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_xpos.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_sol2.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ehppa64linux.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ei386pep.Pc@am__quote@
+diff -Naru binutils-2.41/ld/configure.tgt binutils_patched/ld/configure.tgt
+--- binutils-2.41/ld/configure.tgt	2023-07-02 23:00:00.000000000 +0000
++++ binutils_patched/ld/configure.tgt	2025-02-20 23:40:17.156647064 +0000
+@@ -1011,6 +1011,9 @@
+ x86_64-*-redox*)	targ_emul=elf_x86_64
+ 			targ_extra_emuls=elf_i386
+ 			;;
++x86_64-*-xpos*)	targ_emul=elf_x86_64_xpos
++			targ_extra_emuls="elf_x86_64 elf_i386"
++			;;
+ x86_64-*-solaris2*)	targ_emul=elf_x86_64_sol2
+ 			targ_extra_emuls="elf_x86_64 elf_i386_sol2 elf_i386_ldso elf_i386 elf_iamcu"
+ 			targ_extra_libpath=$targ_extra_emuls
+@@ -1096,6 +1099,10 @@
+ NATIVE_LIB_DIRS='/usr/local/lib /lib /usr/lib'
+ case "${target}" in
+ 
++*-*-xpos*)
++  NATIVE_LIB_DIRS='/System/Libraries'
++  ;;
++
+ *-*-dragonfly*)
+   NATIVE_LIB_DIRS='/lib /usr/lib /usr/pkg/lib /usr/local/lib'
+   ;;
+diff -Naru binutils-2.41/ld/emulparams/elf_x86_64_xpos.sh binutils_patched/ld/emulparams/elf_x86_64_xpos.sh
+--- binutils-2.41/ld/emulparams/elf_x86_64_xpos.sh	1970-01-01 00:00:00.000000000 +0000
++++ binutils_patched/ld/emulparams/elf_x86_64_xpos.sh	2025-02-21 17:41:10.785579928 +0000
+@@ -0,0 +1,2 @@
++source_sh ${srcdir}/emulparams/elf_x86_64.sh
++source_sh ${srcdir}/emulparams/elf_xpos.sh
+diff -Naru binutils-2.41/ld/emulparams/elf_xpos.sh binutils_patched/ld/emulparams/elf_xpos.sh
+--- binutils-2.41/ld/emulparams/elf_xpos.sh	1970-01-01 00:00:00.000000000 +0000
++++ binutils_patched/ld/emulparams/elf_xpos.sh	2025-02-21 15:30:07.513133198 +0000
+@@ -0,0 +1 @@
++ELF_INTERPRETER_NAME=\"/System/Libraries/Loader.so\"
