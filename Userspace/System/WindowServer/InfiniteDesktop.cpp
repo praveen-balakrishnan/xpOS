@@ -163,7 +163,7 @@ void InfiniteDesktop::invalidate_window(Window* window)
 void InfiniteDesktop::process_mouse_event(ViewportCoord vc, int buttons)
 {
     WorldCoord cursorCoord = vc.world_coord(m_viewport);
-    if (buttons & API::HID::MouseButtons::LEFTMB) {
+    if (buttons & API::HID::MouseButtons::LEFTMB && m_windows.size() > 0) {
         if (!(m_mouseButtons & API::HID::MouseButtons::LEFTMB)) {
             if (!m_windows.back()->get_geometry().contains(cursorCoord)) {
                 for (auto rit = m_windows.rbegin(); rit != m_windows.rend(); rit++) {
