@@ -76,8 +76,8 @@ struct BaseAddressRegister
 
     union
     {
-        MemoryBaseAddressRegister memoryBaseAddressRegister;
-        IOBaseAddressRegister ioBaseAddressRegister;
+        MemoryBaseAddressRegister memory;
+        IOBaseAddressRegister io;
     };
 
     BaseAddressRegister(uint32_t value = 0)
@@ -85,11 +85,11 @@ struct BaseAddressRegister
         switch (value & 0x1) {
         case 0:
             type = Memory;
-            memoryBaseAddressRegister = MemoryBaseAddressRegister(value);
+            memory = MemoryBaseAddressRegister(value);
             break;
         case 1:
             type = IO;
-            ioBaseAddressRegister = IOBaseAddressRegister(value);
+            io = IOBaseAddressRegister(value);
             break;
         }
     }
