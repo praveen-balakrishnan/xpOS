@@ -29,7 +29,7 @@ Device::Device(PCI::BusDevice* device)
     uint32_t conf = PCI::config_read_dword(m_pciDev->bus, m_pciDev->device, m_pciDev->function, 0x4);
     conf |= 0x7;
     PCI::config_write_dword(m_pciDev->bus, m_pciDev->device, m_pciDev->function, 0x4, conf);
-    m_basePort = m_pciDev->baseAddressRegisters[0].ioBaseAddressRegister.get_base_address();
+    m_basePort = m_pciDev->baseAddressRegisters[0].io.get_base_address();
 
     m_deviceOperations = {
         .open = Device::open,
@@ -114,7 +114,7 @@ void Device::write_reg(uint32_t reg, uint32_t value)
 void Device::initialise_fifo()
 {
     // The FIFO is used to mainly to send flush commands to the device.
-    auto bar0 = m_pciDev->baseAddressRegisters[2].memoryBaseAddressRegister;
+    auto bar0 = m_pciDev->baseAddressRegisters[2].memory;
     auto fifoAddress = bar0.get_low_base_address();
 
     m_fifoRegisters = reinterpret_cast<volatile FIFORegisters*>(Memory::VirtualAddress(fifoAddress).get());
