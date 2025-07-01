@@ -56,9 +56,11 @@ BusDevice get_pci_device(uint8_t bus, uint8_t device, uint8_t function)
     dev.function = function;
     dev.vendorId = config_read_dword(bus, device, function, 0x00) & 0xFFFF;
     dev.deviceId = (config_read_dword(bus, device, function, 0x00) >> 16) & 0xFFFF;
+    dev.classCode = (config_read_dword(bus, device, function, 0x08) >> 24) & 0xFF;
+    dev.subclassCode = (config_read_dword(bus, device, function, 0x08) >> 16) & 0xFF;
     dev.command = config_read_dword(bus, device, function, 0x04) & 0xFFFF;
     dev.status = (config_read_dword(bus, device, function, 0x04) >> 16) & 0xFFFF;
-    dev.revision = config_read_dword(bus, device, function, 0x08) & 0xF;
+    dev.revision = config_read_dword(bus, device, function, 0x08) & 0xFF;
     dev.interruptLine = config_read_dword(bus, device, function, 0x3C) & 0xF;
 
     if (dev.vendorId != 0x0000 && dev.vendorId != 0xFFFF) {

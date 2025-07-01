@@ -104,6 +104,8 @@ struct BusDevice {
 
     uint16_t vendorId;
     uint16_t deviceId;
+    uint8_t classCode;
+    uint8_t subclassCode;
     uint16_t status;
     uint16_t command;
     uint8_t revision;
