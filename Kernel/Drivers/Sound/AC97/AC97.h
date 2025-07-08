@@ -56,6 +56,12 @@ struct NABMRegisters
     static constexpr uint8_t GLOB_CNT = 0x2C;
 };
 
+struct [[gnu::packed]] BDLEntry
+{
+    uint32_t bufferPointer;
+    uint32_t controlAndLength;
+};
+
 class Device
 {
 public:
@@ -66,6 +72,8 @@ public:
         return *m_instance;
     }
 
+    std::size_t push_single_buffer(const void* data, std::size_t length);
+
 private:
     static Device* m_instance;
     PCI::BusDevice* m_pciDev;
@@ -73,8 +81,18 @@ private:
     static constexpr uint8_t CLASSCODE = 0x04;
     static constexpr uint8_t SUBCLASSCODE = 0x01;
 
+    static constexpr int BDL_MAX_ENTRIES = 32;
+    static constexpr int PAGE_BUFFER_COUNT = 4;
+
     uint16_t m_namBar;
     uint16_t m_nabmBar;
+    bool m_active = false;
+    int m_bdlIdx = 0;
+    int m_bufferIdx = 0;
+
+    Memory::PhysicalAddress m_buffers[PAGE_BUFFER_COUNT];
+
+    Memory::PhysicalAddress m_bdl;
 };
 
 }
