@@ -18,6 +18,7 @@
 
 #include "Drivers/Sound/AC97/AC97.h"
 #include "Memory/MemoryManager.h"
+#include "Tasks/TaskManager.h"
 
 namespace Drivers::Sound::AC97
 {
@@ -43,7 +44,7 @@ void Device::initialise()
     m_instance->m_namBar = namBar;
     m_instance->m_nabmBar = nabmBar;
 
-    IO::out_32(nabmBar + NABMRegisters::GLOB_CNT, 0x2);
+    IO::out_32(nabmBar + NABMRegisters::GLOB_CNT, GlobalControlFlags::COLD_RESET);
     IO::out_16(namBar + NAMRegisters::RESET, 0x1);
     IO::out_16(namBar + NAMRegisters::PCM_OUT_VOL, 0x0);
     IO::out_16(namBar + NAMRegisters::MASTER_VOL, 0x0);
@@ -52,8 +53,6 @@ void Device::initialise()
 
     for (int i = 0; i < PAGE_BUFFER_COUNT; i++)
         m_instance->m_buffers[i] = Memory::Manager::instance().alloc_physical_block();
-    
-    m_instance->m_active = true;
 }
 
 std::size_t Device::push_single_buffer(const void* data, std::size_t length)
@@ -99,5 +98,46 @@ std::size_t Device::push_single_buffer(const void* data, std::size_t length)
 
     return length;
 }
+
+std::size_t Device::push_buffers(const void* data, std::size_t length) {
+    auto* dataPtr = static_cast<const uint8_t*>(data);
+    auto remaining = length;
+    
+    while (remaining > 0) { 
+        auto pushed = std::min(static_cast<std::size_t>(Memory::PAGE_4KiB), remaining);
+        push_single_buffer(dataPtr, pushed);
+        dataPtr += Memory::PAGE_4KiB;
+        remaining -= pushed;
+    }
+
+    return length;
+}
+
+void Device::control_reset()
+{
+    IO::out_8(m_nabmBar + NABMRegisters::PCM_OUT_CR, ControlFlags::RR);
+
+    while (IO::in_8(m_nabmBar + NABMRegisters::PCM_OUT_CR) & ControlFlags::RR)
+        Task::Manager::sleep_for(50);
+    
+    m_active = false;
+}
+
+void Device::start_dma()
+{
+    auto control = IO::in_8(m_nabmBar + NABMRegisters::PCM_OUT_CR);
+    control |= ControlFlags::RPBM;
+    IO::out_8(m_nabmBar + NABMRegisters::PCM_OUT_CR, control);
+    m_active = true;
+}
+
+void Device::stop_dma()
+{
+    auto control = IO::in_8(m_nabmBar + NABMRegisters::PCM_OUT_CR);
+    control &= ~ControlFlags::RPBM;
+    IO::out_8(m_nabmBar + NABMRegisters::PCM_OUT_CR, control);
+    m_active = false;
+}
+
 
 }

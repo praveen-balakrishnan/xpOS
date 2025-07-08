@@ -56,6 +56,21 @@ struct NABMRegisters
     static constexpr uint8_t GLOB_CNT = 0x2C;
 };
 
+struct GlobalControlFlags
+{
+    static constexpr uint32_t GPI_INTERRUPT = 1 << 0;
+    static constexpr uint32_t COLD_RESET = 1 << 1;
+};
+
+struct ControlFlags
+{
+    static constexpr uint8_t RPBM = 1 << 0;
+    static constexpr uint8_t RR = 1 << 1;
+    static constexpr uint8_t LVBIE = 1 << 2;
+    static constexpr uint8_t FEIE = 1 << 3;
+    static constexpr uint8_t IOCE = 1 << 4;
+};
+
 struct [[gnu::packed]] BDLEntry
 {
     uint32_t bufferPointer;
@@ -72,9 +87,14 @@ public:
         return *m_instance;
     }
 
-    std::size_t push_single_buffer(const void* data, std::size_t length);
+    std::size_t push_buffers(const void* data, std::size_t length);
+    void start_dma();
+    void stop_dma();
+    void control_reset();
 
 private:
+    std::size_t push_single_buffer(const void* data, std::size_t length);
+
     static Device* m_instance;
     PCI::BusDevice* m_pciDev;
 
