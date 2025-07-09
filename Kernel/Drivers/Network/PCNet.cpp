@@ -28,7 +28,7 @@ void Device::initialise(PCI::BusDevice* pciDevice)
     for (int bar = 0; bar < m_pciDevice->BAR_COUNT; bar++) {
         auto& reg = m_pciDevice->baseAddressRegisters[bar];
         if (reg.type == PCI::BaseAddressRegister::IO)
-            m_basePort = reg.ioBaseAddressRegister.get_base_address();
+            m_basePort = reg.io.get_base_address();
     }
     auto interruptLine = m_pciDevice->interruptLine + X86_64::Interrupts::MASTER_PIC_VECTOR_BASE;
     add_interrupt_handler(irq_handler, interruptLine);
