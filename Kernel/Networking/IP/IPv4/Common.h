@@ -151,15 +151,15 @@ public:
     }
 
 private:
-    Utilities::NetworkEndian<uint8_t> m_versionAndIhl;
-    Utilities::NetworkEndian<uint8_t> m_DscpAndEcn;
-    Utilities::NetworkEndian<uint16_t> m_length;
-    Utilities::NetworkEndian<uint16_t> m_ident;
-    Utilities::NetworkEndian<uint8_t> m_flagsAndFragment;
-    Utilities::NetworkEndian<uint8_t> m_fragment;
-    Utilities::NetworkEndian<uint8_t> m_ttl;
-    Utilities::NetworkEndian<uint8_t> m_protocol;
-    Utilities::NetworkEndian<uint16_t> m_headerChecksum;
+    Utilities::BigEndian<uint8_t> m_versionAndIhl;
+    Utilities::BigEndian<uint8_t> m_DscpAndEcn;
+    Utilities::BigEndian<uint16_t> m_length;
+    Utilities::BigEndian<uint16_t> m_ident;
+    Utilities::BigEndian<uint8_t> m_flagsAndFragment;
+    Utilities::BigEndian<uint8_t> m_fragment;
+    Utilities::BigEndian<uint8_t> m_ttl;
+    Utilities::BigEndian<uint8_t> m_protocol;
+    Utilities::BigEndian<uint16_t> m_headerChecksum;
     InternetProtocolAddress m_sourceAddress;
     InternetProtocolAddress m_destAddress;
 };

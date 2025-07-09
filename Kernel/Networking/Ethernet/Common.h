@@ -25,7 +25,7 @@
 namespace Networking::Ethernet
 {
 
-using EtherType = Utilities::NetworkEndian<uint16_t>;
+using EtherType = Utilities::BigEndian<uint16_t>;
 
 struct [[gnu::packed]] FrameHeader
 {

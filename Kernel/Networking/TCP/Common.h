@@ -72,10 +72,10 @@ public:
     }
 
 private:
-    Utilities::NetworkEndian<uint32_t> m_sourceIp;
-    Utilities::NetworkEndian<uint32_t> m_destIp;
-    Utilities::NetworkEndian<uint16_t> m_protocol; 
-    Utilities::NetworkEndian<uint16_t> m_length;
+    Utilities::BigEndian<uint32_t> m_sourceIp;
+    Utilities::BigEndian<uint32_t> m_destIp;
+    Utilities::BigEndian<uint16_t> m_protocol; 
+    Utilities::BigEndian<uint16_t> m_length;
 };
 
 struct Flags
@@ -195,16 +195,16 @@ public:
 
 
 private:
-    Utilities::NetworkEndian<uint16_t> m_sourcePort;
-    Utilities::NetworkEndian<uint16_t> m_destPort;
-    Utilities::NetworkEndian<uint32_t> m_sequenceNumber;
-    Utilities::NetworkEndian<uint32_t> m_ackNumber;
-    Utilities::NetworkEndian<uint8_t> m_dataOffset;
-    Utilities::NetworkEndian<uint8_t> m_flags;
-    Utilities::NetworkEndian<uint16_t> m_windowSize;
-    Utilities::NetworkEndian<uint16_t> m_checksum;
-    Utilities::NetworkEndian<uint16_t> m_urgentPointer;
-    Utilities::NetworkEndian<uint32_t> m_options;
+    Utilities::BigEndian<uint16_t> m_sourcePort;
+    Utilities::BigEndian<uint16_t> m_destPort;
+    Utilities::BigEndian<uint32_t> m_sequenceNumber;
+    Utilities::BigEndian<uint32_t> m_ackNumber;
+    Utilities::BigEndian<uint8_t> m_dataOffset;
+    Utilities::BigEndian<uint8_t> m_flags;
+    Utilities::BigEndian<uint16_t> m_windowSize;
+    Utilities::BigEndian<uint16_t> m_checksum;
+    Utilities::BigEndian<uint16_t> m_urgentPointer;
+    Utilities::BigEndian<uint32_t> m_options;
 };
 
 }

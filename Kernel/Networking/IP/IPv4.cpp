@@ -76,7 +76,7 @@ void send(InternetProtocolAddress destIp, uint8_t protocol, uint8_t* buf, std::s
     message->set_dest_ip(destIp);
     message->set_source_ip(ipAddress);
     message->set_header_checksum(0);
-    auto chksum = Networking::Utilities::NetworkEndian<uint16_t>();
+    auto chksum = Utilities::BigEndian<uint16_t>();
     chksum.set_raw_value(checksum(reinterpret_cast<uint16_t*>(message), sizeof(MessageHeader)));
     message->set_header_checksum(chksum.get_value());
 

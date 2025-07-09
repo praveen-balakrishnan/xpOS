@@ -22,59 +22,16 @@
 #include <bit>
 #include <cstdint>
 #include <utility>
+#include "API/Endian.h"
 
 namespace Networking
 {
 
-namespace Utilities
-{
-    static constexpr int MAC_ADDRESS_SIZE = 6;
-
-    template<typename T>
-    class [[gnu::packed]] NetworkEndian
-    {
-    public:
-        constexpr NetworkEndian() = default;
-
-        constexpr NetworkEndian(T value)
-        {
-            set_value(value);
-        }
-
-        constexpr T operator=(T value) 
-        {
-            m_value = std::byteswap(value);
-            return value;
-        }
-
-        constexpr T get_value() const
-        {
-            return std::byteswap(m_value);
-        }
-
-        constexpr void set_value(T value)
-        {
-            m_value = std::byteswap(value);
-        }
-
-        constexpr void set_raw_value(T value)
-        {
-            m_value = value;
-        }
-
-        friend bool operator== (const NetworkEndian& lhs, const NetworkEndian& rhs)
-        {
-            return lhs.get_value() == rhs.get_value();
-        }
-
-    private:
-        T m_value;
-    };
-}
+static constexpr int MAC_ADDRESS_SIZE = 6;
 
 using PortNumber = uint16_t;
 
-using InternetProtocolAddress = Utilities::NetworkEndian<std::uint32_t>;
+using InternetProtocolAddress = Utilities::BigEndian<std::uint32_t>;
 
 using Endpoint = std::pair<PortNumber, InternetProtocolAddress>;
 

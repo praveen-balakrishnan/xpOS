@@ -351,7 +351,7 @@ void Socket::send(uint32_t seq, const uint8_t* data, uint16_t size, uint8_t flag
     
     memcpy(buf + sizeof(PseudoHeader) + sizeof(Header), data, size);
 
-    Networking::Utilities::NetworkEndian<uint16_t> chksum;
+    Utilities::BigEndian<uint16_t> chksum;
     chksum.set_raw_value(InternetProtocolV4::checksum(reinterpret_cast<uint16_t*>(buf), sizeInclPseudoHeader));
     header->set_checksum(chksum.get_value());
     InternetProtocolV4::send(m_remoteIp, InternetProtocolV4::Protocol::TCP, reinterpret_cast<uint8_t*>(header), size + sizeof(Header));

@@ -29,16 +29,16 @@
 namespace Networking::AddressResolutionProtocol
 {
 
-using HardwareType = Utilities::NetworkEndian<std::uint16_t>;
+using HardwareType = Utilities::BigEndian<std::uint16_t>;
 using ProtocolType = Ethernet::EtherType;
 
 struct [[gnu::packed]] Message
 {
     HardwareType hardwareType;
     ProtocolType protocolType;
-    Utilities::NetworkEndian<std::uint8_t> hardwareAddressLen;
-    Utilities::NetworkEndian<std::uint8_t> protocolAddressLen;
-    Utilities::NetworkEndian<std::uint16_t> operation;
+    Utilities::BigEndian<std::uint8_t> hardwareAddressLen;
+    Utilities::BigEndian<std::uint8_t> protocolAddressLen;
+    Utilities::BigEndian<std::uint16_t> operation;
     MediaAccessControlAddress senderHardwareAddress;
     InternetProtocolAddress senderProtocolAddress;
     MediaAccessControlAddress targetHardwareAddress;
@@ -54,18 +54,18 @@ struct HardwareTypeValues
 
 struct HardwareAddressLengthValues
 {
-    static constexpr Utilities::NetworkEndian<std::uint8_t> ETHERNET = 0x06;
+    static constexpr Utilities::BigEndian<std::uint8_t> ETHERNET = 0x06;
 };
 
 struct ProtocolAddressLengthValues
 {
-    static constexpr Utilities::NetworkEndian<std::uint8_t> IPV4 = 0x04;
+    static constexpr Utilities::BigEndian<std::uint8_t> IPV4 = 0x04;
 };
 
 struct OperationValues
 {
-    static constexpr Utilities::NetworkEndian<std::uint16_t> REQUEST = 0x1;
-    static constexpr Utilities::NetworkEndian<std::uint16_t> REPLY = 0x2;
+    static constexpr Utilities::BigEndian<std::uint16_t> REQUEST = 0x1;
+    static constexpr Utilities::BigEndian<std::uint16_t> REPLY = 0x2;
 };
 
 static constexpr MediaAccessControlAddress BROADCAST_MAC = 0xFFFFFFFFFFFF;
