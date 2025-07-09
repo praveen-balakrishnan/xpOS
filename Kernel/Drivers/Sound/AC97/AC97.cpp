@@ -139,5 +139,4 @@ void Device::stop_dma()
     m_active = false;
 }
 
-
 }

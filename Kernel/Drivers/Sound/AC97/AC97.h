@@ -26,6 +26,11 @@
 namespace Drivers::Sound::AC97
 {
 
+/**
+ * This code is specific to AC'97 audio codec soundcards. Refer to the Intel
+ * HDA/AC'97 Programmer's Reference Manual.
+ */
+
 struct NAMRegisters
 {
     static constexpr uint8_t RESET = 0x00;
