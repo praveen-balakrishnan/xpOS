@@ -25,6 +25,7 @@
 char* strcpy(char* dst, const char* str);
 char* strncpy(char* dst, const char* str, uint64_t num);
 int strcmp(const char* s1, const char* s2);
+int strncmp(const char* s1, const char* s2, uint64_t num);
 
 namespace Common
 {
