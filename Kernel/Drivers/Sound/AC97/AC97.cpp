@@ -23,6 +23,8 @@
 namespace Drivers::Sound::AC97
 {
 
+Device* Device::m_instance;
+
 void Device::initialise()
 {
     m_instance = new Device();
@@ -44,10 +46,12 @@ void Device::initialise()
     m_instance->m_namBar = namBar;
     m_instance->m_nabmBar = nabmBar;
 
-    IO::out_32(nabmBar + NABMRegisters::GLOB_CNT, GlobalControlFlags::COLD_RESET);
+    auto control = IO::in_32(nabmBar + NABMRegisters::GLOB_CNT);
+    IO::out_32(nabmBar + NABMRegisters::GLOB_CNT, control | GlobalControlFlags::COLD_RESET);
     IO::out_16(namBar + NAMRegisters::RESET, 0x1);
     IO::out_16(namBar + NAMRegisters::PCM_OUT_VOL, 0x0);
     IO::out_16(namBar + NAMRegisters::MASTER_VOL, 0x0);
+    m_instance->control_reset();
 
     m_instance->m_bdl = Memory::Manager::instance().alloc_physical_block();
 
@@ -85,13 +89,15 @@ std::size_t Device::push_single_buffer(const void* data, std::size_t length)
 
     } while (m_active);
 
+    auto bufferPointer = m_buffers[m_bufferIdx];
+    memcpy(Memory::VirtualAddress(bufferPointer).get(), data, length);
     uint16_t sampleCount = length / sizeof(uint16_t);
     auto bdl = reinterpret_cast<BDLEntry*>(Memory::VirtualAddress(m_bdl).get());
-    bdl[m_bufferIdx].bufferPointer = Memory::PhysicalAddress(m_buffers + m_bufferIdx).get_raw();
+    bdl[m_bufferIdx].bufferPointer = bufferPointer.get_raw();
     bdl[m_bufferIdx].controlAndLength = sampleCount;
     
     IO::out_32(m_nabmBar + NABMRegisters::PCM_OUT_BDBAR, m_bdl.get_raw());
-    IO::out_8(m_nabmBar + NABMRegisters::PCM_OUT_CIV, m_bdlIdx);
+    IO::out_8(m_nabmBar + NABMRegisters::PCM_OUT_LVI, m_bdlIdx);
 
     m_bdlIdx = (m_bdlIdx + 1) % BDL_MAX_ENTRIES;
     m_bufferIdx = (m_bufferIdx + 1) % PAGE_BUFFER_COUNT;
