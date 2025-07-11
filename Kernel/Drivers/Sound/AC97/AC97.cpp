@@ -53,6 +53,16 @@ void Device::initialise()
     IO::out_16(namBar + NAMRegisters::MASTER_VOL, 0x0);
     m_instance->control_reset();
 
+    m_instance->m_supportsVarRate = IO::in_16(namBar + NAMRegisters::EXT_AUDIO_ID) & ExtendedRateControl::VRA;
+    m_instance->m_supportsDoubleRate = IO::in_16(namBar + NAMRegisters::EXT_AUDIO_ID) & ExtendedRateControl::DRA;
+
+    auto ctrl = IO::in_16(namBar + NAMRegisters::EXT_AUDIO_CTRL);
+    if (m_instance->m_supportsVarRate)
+        ctrl |= ExtendedRateControl::VRA;
+    if (m_instance->m_supportsDoubleRate)
+        ctrl |= ExtendedRateControl::DRA;
+    IO::out_16(namBar + NAMRegisters::EXT_AUDIO_CTRL, ctrl);
+
     m_instance->m_bdl = Memory::Manager::instance().alloc_physical_block();
 
     for (int i = 0; i < PAGE_BUFFER_COUNT; i++)
@@ -143,6 +153,23 @@ void Device::stop_dma()
     control &= ~ControlFlags::RPBM;
     IO::out_8(m_nabmBar + NABMRegisters::PCM_OUT_CR, control);
     m_active = false;
+}
+
+unsigned int Device::request_sample_rate(unsigned int sampleRate)
+{
+    int doubleRateShift = m_supportsDoubleRate ? 1 : 0;
+    if (!m_supportsVarRate)
+        return DEFAULT_SRATE << doubleRateShift;
+    
+    if ((sampleRate >> doubleRateShift) < (1 << 16))
+        IO::out_16(m_namBar + NAMRegisters::SRATE_PCM_FRNT, sampleRate >> doubleRateShift);
+    
+    auto setRate = IO::in_16(m_namBar + NAMRegisters::SRATE_PCM_FRNT) << doubleRateShift;
+    
+    if (m_active)
+        start_dma();
+
+    return setRate;
 }
 
 }

@@ -85,6 +85,12 @@ struct StatusFlags
     static constexpr uint8_t FIFOE = 1 << 4;
 };
 
+struct ExtendedRateControl
+{
+    static constexpr uint8_t VRA = 1 << 0;
+    static constexpr uint8_t DRA = 1 << 1;
+};
+
 struct [[gnu::packed]] BDLEntry
 {
     uint32_t bufferPointer;
@@ -105,6 +111,7 @@ public:
     void start_dma();
     void stop_dma();
     void control_reset();
+    unsigned int request_sample_rate(unsigned int sampleRate);
 
 private:
     std::size_t push_single_buffer(const void* data, std::size_t length);
@@ -116,13 +123,18 @@ private:
     static constexpr uint8_t SUBCLASSCODE = 0x01;
 
     static constexpr int BDL_MAX_ENTRIES = 32;
-    static constexpr int PAGE_BUFFER_COUNT = 4;
+    static constexpr int PAGE_BUFFER_COUNT = 32;
+
+    static constexpr int DEFAULT_SRATE = 48000;
 
     uint16_t m_namBar;
     uint16_t m_nabmBar;
     bool m_active = false;
     int m_bdlIdx = 0;
     int m_bufferIdx = 0;
+
+    bool m_supportsVarRate = false;
+    bool m_supportsDoubleRate = false;
 
     Memory::PhysicalAddress m_buffers[PAGE_BUFFER_COUNT];
 
