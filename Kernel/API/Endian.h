@@ -19,6 +19,8 @@
 #ifndef XPOS_ENDIAN_H
 #define XPOS_ENDIAN_H
 
+#include <bit>
+
 namespace Utilities
 {
     template<typename T>
