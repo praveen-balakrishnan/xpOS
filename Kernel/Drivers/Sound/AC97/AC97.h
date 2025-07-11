@@ -76,6 +76,15 @@ struct ControlFlags
     static constexpr uint8_t IOCE = 1 << 4;
 };
 
+struct StatusFlags
+{
+    static constexpr uint8_t DCH = 1 << 0;
+    static constexpr uint8_t CELV = 1 << 1;
+    static constexpr uint8_t LVBCI = 1 << 2;
+    static constexpr uint8_t BCIS = 1 << 3;
+    static constexpr uint8_t FIFOE = 1 << 4;
+};
+
 struct [[gnu::packed]] BDLEntry
 {
     uint32_t bufferPointer;
