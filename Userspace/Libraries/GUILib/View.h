@@ -23,6 +23,9 @@
 #include <optional>
 #include <vector>
 
+namespace xpOS::GUILib
+{
+
 struct Point
 {
     int x;
@@ -87,25 +90,7 @@ public:
     , maxHeight(maxHeight)
     {}
 
-    LayoutNode computeLayout(const Size& suggestion) override
-    {
-        Size clampedSize;
-        clampedSize.width = width.has_value() ? *width : clamp(suggestion.width, minWidth, maxWidth);
-        clampedSize.height = height.has_value() ? *height : clamp(suggestion.height, minHeight, maxHeight);
-
-        LayoutNode childLayout = child->computeLayout(clampedSize);
-        Size childSize = childLayout.size;
-
-        LayoutNode node;
-        node.size.width =  width.has_value() ? *width : clamp(childSize.width, minWidth, maxWidth);
-        node.size.height = height.has_value() ? *height : clamp(childSize.height, minHeight, maxHeight);
-
-        childLayout.origin.x = (node.size.width - childLayout.size.width) / 2;
-        childLayout.origin.y = (node.size.height - childLayout.size.height) / 2;
-        node.children.push_back(childLayout);
-        
-        return node;
-    }
+    LayoutNode computeLayout(const Size& suggestion) override;
 
 private:
     static int clamp(int value, std::optional<int> min, std::optional<int> max)
@@ -118,5 +103,7 @@ private:
         return value;
     }
 };
+
+}
 
 #endif
