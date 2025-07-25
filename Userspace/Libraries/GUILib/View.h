@@ -42,13 +42,16 @@ class View;
 
 struct LayoutNode
 {
-    Point origin;
-    Size size;
+    Point origin = {0, 0};
+    Size size = {0, 0};
     std::shared_ptr<View> view;
     std::vector<LayoutNode> children;
+    LayoutNode(std::shared_ptr<View> viewPtr)
+    : view(viewPtr)
+    {}
 };
 
-class View
+class View : public std::enable_shared_from_this<View>
 {
 public:
     virtual ~View() = default;
@@ -58,12 +61,19 @@ public:
     {
         return false;
     }
+    std::shared_ptr<FrameView> frame(
+        std::optional<int> width = std::nullopt,
+        std::optional<int> height = std::nullopt,
+        std::optional<int> minWidth = std::nullopt,
+        std::optional<int> minHeight = std::nullopt,
+        std::optional<int> maxWidth = std::nullopt,
+        std::optional<int> maxHeight = std::nullopt
+    );
 };
 
 class FrameView : public View
 {
 public:
-    virtual ~FrameView() noexcept = default;
     std::shared_ptr<View> child;
     std::optional<int> width;
     std::optional<int> height;
@@ -74,12 +84,12 @@ public:
 
     FrameView(
         std::shared_ptr<View> child,
-        std::optional<int> width,
-        std::optional<int> height,
-        std::optional<int> minWidth,
-        std::optional<int> minHeight,
-        std::optional<int> maxWidth,
-        std::optional<int> maxHeight
+        std::optional<int> width = std::nullopt,
+        std::optional<int> height = std::nullopt,
+        std::optional<int> minWidth = std::nullopt,
+        std::optional<int> minHeight = std::nullopt,
+        std::optional<int> maxWidth = std::nullopt,
+        std::optional<int> maxHeight = std::nullopt
     )
     : child(child)
     , width(width)
@@ -91,6 +101,7 @@ public:
     {}
 
     LayoutNode computeLayout(const Size& suggestion) override;
+    void draw(Point origin, Size size) override {}
 
 private:
     static int clamp(int value, std::optional<int> min, std::optional<int> max)
@@ -101,6 +112,26 @@ private:
             value = std::min(value, *max);
         
         return value;
+    }
+};
+
+class SpacerView : public View
+{
+public:
+    SpacerView() = default;
+
+    LayoutNode computeLayout(const Size& suggestion) override
+    {
+        LayoutNode node(shared_from_this());
+        node.size = {0, 0};
+        return node;
+    }
+
+    void draw(Point origin, Size size) override {}
+
+    bool isFlexible() const override
+    {
+        return true;
     }
 };
 

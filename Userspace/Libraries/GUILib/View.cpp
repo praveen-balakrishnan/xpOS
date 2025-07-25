@@ -30,7 +30,7 @@ LayoutNode FrameView::computeLayout(const Size& suggestion)
         LayoutNode childLayout = child->computeLayout(clampedSize);
         Size childSize = childLayout.size;
 
-        LayoutNode node;
+        LayoutNode node(shared_from_this());
         node.size.width =  width.has_value() ? *width : clamp(childSize.width, minWidth, maxWidth);
         node.size.height = height.has_value() ? *height : clamp(childSize.height, minHeight, maxHeight);
 
@@ -40,5 +40,25 @@ LayoutNode FrameView::computeLayout(const Size& suggestion)
         
         return node;
     }
+
+std::shared_ptr<FrameView> View::frame(
+    std::optional<int> width,
+    std::optional<int> height,
+    std::optional<int> minWidth,
+    std::optional<int> minHeight,
+    std::optional<int> maxWidth,
+    std::optional<int> maxHeight
+)
+{
+    return std::make_shared<class FrameView>(
+        shared_from_this(),
+        width,
+        height,
+        minWidth,
+        minHeight,
+        maxWidth,
+        maxHeight
+    );
+}
 
 }
