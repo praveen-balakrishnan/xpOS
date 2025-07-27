@@ -22,21 +22,10 @@
 #include <memory>
 #include <optional>
 #include <vector>
+#include "Context.h"
 
 namespace xpOS::GUILib
 {
-
-struct Point
-{
-    int x;
-    int y;
-};
-
-struct Size
-{
-    int width;
-    int height;
-};
 
 class View;
 
@@ -56,7 +45,7 @@ class View : public std::enable_shared_from_this<View>
 public:
     virtual ~View() = default;
     virtual LayoutNode computeLayout(const Size& suggestion) = 0;
-    virtual void draw(Point origin, Size size) = 0;
+    virtual void draw(Point origin, Size size, Context& context) = 0;
     virtual bool isFlexible() const
     {
         return false;
@@ -101,7 +90,7 @@ public:
     {}
 
     LayoutNode computeLayout(const Size& suggestion) override;
-    void draw(Point origin, Size size) override {}
+    void draw(Point origin, Size size, Context& context) override {}
 
 private:
     static int clamp(int value, std::optional<int> min, std::optional<int> max)
@@ -127,7 +116,7 @@ public:
         return node;
     }
 
-    void draw(Point origin, Size size) override {}
+    void draw(Point origin, Size size, Context& context) override {}
 
     bool isFlexible() const override
     {

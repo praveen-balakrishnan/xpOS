@@ -33,7 +33,7 @@ public:
     {}
 
     LayoutNode computeLayout(const Size& suggestion) override;
-    void draw(Point point, Size size) override
+    void draw(Point point, Size size, Context& context) override
     {}
 
 private:
@@ -50,7 +50,7 @@ public:
     {}
 
     LayoutNode computeLayout(const Size& suggestion) override;
-    void draw(Point point, Size size) override
+    void draw(Point point, Size size, Context& context) override
     {}
 private:
     std::vector<std::shared_ptr<View>> m_childViews;
