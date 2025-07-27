@@ -19,8 +19,7 @@
 #include "InfiniteDesktop.h"
 #include "Graphics.h"
 #include <ranges>
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "Libraries/GraphicsLib/stb_image.h"
 
 InfiniteDesktop::InfiniteDesktop(const RenderBuffer& buffer)
     : m_buffer(buffer)

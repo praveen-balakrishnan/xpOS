@@ -1,5 +1,6 @@
 set(SOURCES
         Graphics.cpp
+        Image.cpp
         Text.cpp
 )
 
