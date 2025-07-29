@@ -57,6 +57,26 @@ private:
     int m_spacing;
 };
 
+class SpacerView : public View
+{
+public:
+    SpacerView() = default;
+
+    LayoutNode computeLayout(const Size& suggestion) override
+    {
+        LayoutNode node(shared_from_this());
+        node.size = {0, 0};
+        return node;
+    }
+
+    void draw(Point origin, Size size, Context& context) override {}
+
+    bool isFlexible() const override
+    {
+        return true;
+    }
+};
+
 }
 
 #endif
