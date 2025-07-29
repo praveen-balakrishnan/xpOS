@@ -16,38 +16,25 @@
     xpOS v1.0
 */
 
-#ifndef XPOS_GUILIB_CONTEXT_H
-#define XPOS_GUILIB_CONTEXT_H
-
-#include <cstdint>
-#include <memory>
+#include "Context.h"
+#include "View.h"
 
 namespace xpOS::GUILib
 {
 
-struct Point
+void draw(LayoutNode& tree, Context& context, Point origin)
 {
-    int x;
-    int y;
-};
-
-struct Size
-{
-    int width;
-    int height;
-};
-
-class View;
-
-struct Context
-{
-    uint32_t* framebuffer;
-    Size size;
-
-    void run_view(std::shared_ptr<View>);
-};
-
-
+    origin.x += tree.origin.x;
+    origin.y += tree.origin.y;
+    tree.view->draw(origin, tree.size, context);
+    for (auto& child : tree.children)
+        draw(child, context, origin);
 }
 
-#endif
+void Context::run_view(std::shared_ptr<View> view)
+{
+    auto layoutTree = view->computeLayout({size.width, size.height});
+    draw(layoutTree, context, {0, 0});
+}
+
+}
