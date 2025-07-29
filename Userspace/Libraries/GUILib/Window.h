@@ -46,7 +46,7 @@ private:
     IPC::Connection<ClientEndpoint> m_wsconn;
 public:
     static std::optional<Window> create(int width, int height);
-    Context get_context()
+    Context context()
     {
         Context context {
             .framebuffer = m_framebuffer,

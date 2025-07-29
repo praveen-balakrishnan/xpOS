@@ -38,6 +38,11 @@ private:
     uint32_t* m_pixelBuf = nullptr;
 };
 
+std::shared_ptr<ImageView> Image(std::string path)
+{
+    return std::make_shared<class ImageView>(path);
+}
+
 }
 
 #endif
