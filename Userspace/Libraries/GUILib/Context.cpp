@@ -34,7 +34,7 @@ void draw(LayoutNode& tree, Context& context, Point origin)
 void Context::run_view(std::shared_ptr<View> view)
 {
     auto layoutTree = view->computeLayout({size.width, size.height});
-    draw(layoutTree, context, {0, 0});
+    draw(layoutTree, *this, {0, 0});
 }
 
 }
