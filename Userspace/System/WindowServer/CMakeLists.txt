@@ -9,7 +9,7 @@ set(SOURCES
 
 add_executable(WindowServer ${SOURCES})
 
-target_link_libraries(WindowServer PRIVATE OSLib SerialisationLib)
+target_link_libraries(WindowServer PRIVATE GraphicsLib OSLib SerialisationLib)
 target_include_directories(WindowServer PRIVATE ${CMAKE_SOURCE_DIR}/Kernel ${CMAKE_SOURCE_DIR}/Userspace)
 target_link_options(WindowServer PRIVATE -static)
 
