@@ -1,2 +1,2 @@
 #add_subdirectory(Doomgeneric)
-#add_subdirectory(testprog)
+add_subdirectory(MusicPlayer)

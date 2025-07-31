@@ -14,7 +14,7 @@ set(KernelBinary "${CMAKE_SOURCE_DIR}/Targets/x86_64/xpOS.iso")
 set(targetISO "${CMAKE_SOURCE_DIR}/Targets/x86_64/xpOS.iso")
 
 set(ProgramsToBuild
-
+        MusicPlayer
 )
 
 add_custom_command(
