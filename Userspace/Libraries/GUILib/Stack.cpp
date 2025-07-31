@@ -137,4 +137,19 @@ LayoutNode VStackView::computeLayout(const Size& suggestion)
     return node;
 }
 
+std::shared_ptr<VStackView> VStack(std::initializer_list<std::shared_ptr<View>> views)
+{
+    return std::make_shared<class VStackView>(views);
+}
+
+std::shared_ptr<HStackView> HStack(std::initializer_list<std::shared_ptr<View>> views)
+{
+    return std::make_shared<class HStackView>(views);
+}
+
+std::shared_ptr<SpacerView> Spacer()
+{
+    return std::make_shared<class SpacerView>();
+}
+
 }
