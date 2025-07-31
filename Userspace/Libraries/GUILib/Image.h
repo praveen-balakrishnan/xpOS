@@ -30,7 +30,7 @@ public:
     ImageView(std::string path);
 
     LayoutNode computeLayout(const Size& suggestion) override;
-    void draw(Point point, Size size, Context& context) override {}
+    void draw(Point point, Size size, Context& context) override;
 
 private:
     int m_width;
@@ -38,10 +38,7 @@ private:
     uint32_t* m_pixelBuf = nullptr;
 };
 
-std::shared_ptr<ImageView> Image(std::string path)
-{
-    return std::make_shared<class ImageView>(path);
-}
+std::shared_ptr<ImageView> Image(std::string path);
 
 }
 

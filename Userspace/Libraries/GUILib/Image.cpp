@@ -16,7 +16,7 @@
     xpOS v1.0
 */
 
-#include "GraphicsLib/stb_image.h"
+#include "Libraries/GraphicsLib/stb_image.h"
 #include "Image.h"
 
 namespace xpOS::GUILib
@@ -53,11 +53,10 @@ LayoutNode ImageView::computeLayout(const Size& suggestion)
 
 void ImageView::draw(Point point, Size size, Context& context)
 {
-    
     const int destStartCol = std::max(0, point.x);
     const int destStartRow = std::max(0, point.y);
     const int destEndCol = std::min(context.size.width, point.x + size.width);
-    const int destEndRow = std::min(context.size.width, point.y + size.height);
+    const int destEndRow = std::min(context.size.height, point.y + size.height);
     const int destStride = context.size.width;
 
     const int srcStartCol = destStartCol - point.x;
@@ -65,13 +64,17 @@ void ImageView::draw(Point point, Size size, Context& context)
     const int srcStride = size.width;
 
     for (int r = 0; r < (destEndRow - destStartRow); r++) {
-    const uint32_t* srcRowPtr = m_pixelBuf + (r + srcStartRow) * srcStride + srcStartCol;
-    uint32_t* destRowPtr = context.framebuffer + (r + destStartRow) * destStride + destStartCol;
+        const uint32_t* srcRowPtr = m_pixelBuf + (r + srcStartRow) * srcStride + srcStartCol;
+        uint32_t* destRowPtr = context.framebuffer + (r + destStartRow) * destStride + destStartCol;
 
-    for (int c = 0; c < (destEndCol - destStartCol); c++)
-        destRowPtr[c] = srcRowPtr[c];
+        for (int c = 0; c < (destEndCol - destStartCol); c++)
+            destRowPtr[c] = srcRowPtr[c];
+    }
 }
 
+std::shared_ptr<ImageView> Image(std::string path)
+{
+    return std::make_shared<class ImageView>(path);
 }
 
 }
