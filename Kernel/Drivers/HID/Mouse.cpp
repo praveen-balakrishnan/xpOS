@@ -53,8 +53,8 @@ namespace Devices::HID::Mouse
                 queuedMessages.clear();
                 eventListenerList.notify(Pipes::EventTypes::READABLE);
             }
-            mouseQueueLock.release();
             Task::Manager::instance().about_to_block();
+            mouseQueueLock.release();
             Task::Manager::instance().block();
             mouseQueueLock.acquire();
         }

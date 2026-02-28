@@ -94,8 +94,8 @@ namespace Devices::HID::Keyboard
                 keyEvents.clear();
                 eventListenerList.notify(Pipes::EventTypes::READABLE);
             }
-            scancodeQueueLock.release();
             Task::Manager::instance().about_to_block();
+            scancodeQueueLock.release();
             Task::Manager::instance().block();
             scancodeQueueLock.acquire();
         }
