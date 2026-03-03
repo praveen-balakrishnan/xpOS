@@ -140,6 +140,7 @@ namespace Devices::HID::Keyboard
     void close(void*& deviceSpecific)
     {
         auto* scancodeBuffer = reinterpret_cast<ScancodeBuffer*>(deviceSpecific);
+        LockAcquirer l(bufferListLock);
         for (auto it = buffers.begin(); it != buffers.end(); it++) {
             if (*it == scancodeBuffer) {
                 buffers.erase(it);

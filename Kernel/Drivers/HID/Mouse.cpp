@@ -132,6 +132,7 @@ namespace Devices::HID::Mouse
     void close(void*& deviceSpecific)
     {
         auto* mouseBuffer = reinterpret_cast<MouseBuffer*>(deviceSpecific);
+        LockAcquirer l(bufferListLock);
         for (auto it = buffers.begin(); it != buffers.end(); it++) {
             if (*it == mouseBuffer) {
                 buffers.erase(it);
